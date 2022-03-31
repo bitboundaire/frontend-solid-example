@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useCallback, useEffect, useReducer } from "react";
 import { User } from "../types";
 import { useNavigate } from "react-router-dom";
+import { IStorage } from "../interfaces/interfaces";
 
 type State = {
   user?: User;
@@ -49,7 +50,7 @@ const reducer = (state: { user?: User }, action: Action) => {
   }
 };
 
-const UserProvider = ({ children }: { children: ReactNode }) => {
+const UserProvider = ({ children, storage }: { children: ReactNode, storage: IStorage }) => {
   const [state, dispatch] = useReducer(reducer, {});
 
   const navigate = useNavigate();
@@ -58,34 +59,25 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
     dispatch({ type: "SET_USER", payload: user });
 
     if (user) {
-      localStorage.setItem("user", JSON.stringify(user));
+      storage.set("user", JSON.stringify(user));
     } else {
-      localStorage.removeItem("user");
-      navigate("/login");
+      storage.remove("user");
     }
-  }, [navigate]);
+  }, [storage]);
 
   const updateName = (name: string) => {
     dispatch({ type: "UPDATE_NAME", payload: name });
 
-    localStorage.setItem("user", JSON.stringify({...state.user, name}));
+    storage.set("user", JSON.stringify({...state.user, name}));
   };
 
   const updateEmail = (email: string) => {
     dispatch({ type: "UPDATE_EMAIL", payload: email });
 
-    localStorage.setItem("user", JSON.stringify({...state.user, email}));
+    storage.set("user", JSON.stringify({...state.user, email}));
   };
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") ?? "{}");
 
-    if (user.id) {
-      setUser(user);
-    } else {
-      navigate("/login");
-    }
-  }, [navigate, setUser]);
 
   return (
       <Provider value={{
