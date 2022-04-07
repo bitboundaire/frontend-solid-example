@@ -1,7 +1,6 @@
-import { createContext, ReactNode, useCallback, useEffect, useReducer } from "react";
+import { createContext, ReactNode, useCallback, useReducer } from "react";
 import { User } from "../types";
-import { useNavigate } from "react-router-dom";
-import { IStorage } from "../interfaces/interfaces";
+import { IStorage } from "../interfaces/storage";
 
 type State = {
   user?: User;
@@ -53,13 +52,11 @@ const reducer = (state: { user?: User }, action: Action) => {
 const UserProvider = ({ children, storage }: { children: ReactNode, storage: IStorage }) => {
   const [state, dispatch] = useReducer(reducer, {});
 
-  const navigate = useNavigate();
-
   const setUser = useCallback((user?: User) => {
     dispatch({ type: "SET_USER", payload: user });
 
     if (user) {
-      storage.set("user", JSON.stringify(user));
+      storage.set("user", user);
     } else {
       storage.remove("user");
     }
@@ -68,16 +65,14 @@ const UserProvider = ({ children, storage }: { children: ReactNode, storage: ISt
   const updateName = (name: string) => {
     dispatch({ type: "UPDATE_NAME", payload: name });
 
-    storage.set("user", JSON.stringify({...state.user, name}));
+    storage.set("user", {...state.user, name});
   };
 
   const updateEmail = (email: string) => {
     dispatch({ type: "UPDATE_EMAIL", payload: email });
 
-    storage.set("user", JSON.stringify({...state.user, email}));
+    storage.set("user", {...state.user, email});
   };
-
-
 
   return (
       <Provider value={{

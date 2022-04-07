@@ -1,6 +1,6 @@
 import { ElementType, useEffect } from "react";
 import { useUserContext } from "./use-user-context";
-import { IStorage } from "../interfaces/interfaces";
+import { IStorage } from "../interfaces/storage";
 import { LOGIN_ROUTE } from "../utils/constants";
 
 interface WithUserProps {
@@ -14,7 +14,7 @@ const withUser = (Component: ElementType, dependencyProps: WithUserProps) => (pr
   const { setUser } = useUserContext();
 
   useEffect(() => {
-    const user = JSON.parse(storage.get("user") ?? "{}");
+    const user = storage.get("user");
 
     if (user.id) {
       setUser(user);

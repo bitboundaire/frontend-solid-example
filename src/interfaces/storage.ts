@@ -1,20 +1,20 @@
 export interface IStorage {
   remove(key: string): void;
   get(key: string): any;
-  set(key: string, value: string): void
+  set(key: string, value: any): void
 }
 
 export class LocalStorage implements IStorage {
   get(key: string): any {
-    return localStorage.getItem(key);
+    return JSON.parse(localStorage.getItem(key) ?? "{}");
   }
 
   remove(key: string): void {
     localStorage.removeItem(key);
   }
 
-  set(key: string, value: string): void {
-    localStorage.setItem(key, value);
+  set(key: string, value: any): void {
+    localStorage.setItem(key, JSON.stringify(value));
   }
 }
 

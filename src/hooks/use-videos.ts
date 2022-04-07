@@ -1,21 +1,22 @@
 import { useCallback } from "react";
 import { Video, VideoRequest } from "../types";
-import { differenceInMinutes } from "date-fns";
 import { api } from "../utils/api";
 import { AxiosResponse } from "axios";
 import { API_KEY } from "../utils/constants";
-import { IStorage } from "../interfaces/interfaces";
+import { IStorage } from "../interfaces/storage";
+import { ICache } from "../interfaces/cache";
 
 export interface UseVideosProps {
   storage: IStorage;
+  cache: ICache;
 }
 
-const useVideos = ({ storage }: UseVideosProps) => {
+const useVideos = ({ storage, cache }: UseVideosProps) => {
   const getVideos = useCallback(async (): Promise<Video[]> => {
-    const cache = JSON.parse(storage.get("videos") ?? "{}");
+    const videosFromCache = cache.get<Video[]>("videos");
 
-    if (cache.time && differenceInMinutes(cache.time, new Date()) < 5) {
-      return cache.videos as Video[];
+    if (videosFromCache) {
+      return videosFromCache;
     }
 
     const response = await api.get<any, AxiosResponse<VideoRequest>>("search", {
