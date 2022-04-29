@@ -5,21 +5,11 @@ import { useEffect, useState } from "react";
 import { Video } from "../types";
 import { Layout } from "../components/layout";
 import { useVideos } from "../hooks/use-videos";
-import { IStorage } from "../interfaces/storage";
-import { ICache } from "../interfaces/cache";
 
-interface HomePageProps {
-  storage: IStorage;
-  cache: ICache;
-}
-
-export const HomePage = ({ storage, cache }: HomePageProps) => {
+export const HomePage = () => {
   const [videos, setVideos] = useState<Video[]>([]);
 
-  const { getVideos } = useVideos({
-    storage,
-    cache
-  });
+  const { getVideos } = useVideos();
 
   useEffect(() => {
     getVideos().then(videos => {
